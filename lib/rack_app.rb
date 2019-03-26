@@ -1,13 +1,21 @@
 require 'erb'
 
 class RackApp
-  def call(env)
-    request = Rack::Request.new(env)
+  # Each request creates a new instance of the app in order
+  # to isolate instance variables per request.
+  def self.call(env)
+    new(env).response.finish
+  end
 
-    if(request.request_method == 'GET')
+  def initialize(env)
+    @request = Rack::Request.new(env)
+  end
+
+  def response
+    if(@request.request_method == 'GET')
       index_page
     else
-      post_image
+      post_image(@request.params)
     end
   end
 
@@ -19,6 +27,13 @@ class RackApp
         view_path("index.html.erb")
       )
     )
+  end
+
+  def post_image(params)
+    Rack::Response.new do |response|
+      response.set_cookie('photo_path', params["photo_path"])
+      response.redirect("/")
+    end
   end
 
   def render(path)

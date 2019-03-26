@@ -13,4 +13,6 @@ puts ''
 # Reload files on every request
 use(Rack::Reloader, 0) if ENV.fetch('RACK_ENV') == 'development'
 
-run RackApp.new
+# We pass the class here and let each request create
+# a new instance to isolate memory per request.
+run RackApp
