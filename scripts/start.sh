@@ -1,1 +1,1 @@
-rackup -Ilib
+bundle exec rackup -Ilib
